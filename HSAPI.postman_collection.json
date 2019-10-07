@@ -1,0 +1,1103 @@
+{
+	"info": {
+		"_postman_id": "f6c6ac18-6ca5-4caa-acbc-fdabc0088422",
+		"name": "HSAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login_CSP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "93a8a484-fc88-425a-9011-8acf73804020",
+								"exec": [
+									"// Parse the response to extract the value of the csp id_token to a variable cspTokenId.",
+									"var response = JSON.parse(responseBody);",
+									"pm.environment.set(\"cspTokenId\", response.id_token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "refresh_token",
+									"type": "text"
+								},
+								{
+									"key": "refresh_token",
+									"value": "{{cspUserRefreshToken}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://{{cspAddress}}/csp/gateway/am/api/auth/api-tokens/authorize",
+							"protocol": "https",
+							"host": [
+								"{{cspAddress}}"
+							],
+							"path": [
+								"csp",
+								"gateway",
+								"am",
+								"api",
+								"auth",
+								"api-tokens",
+								"authorize"
+							]
+						},
+						"description": "This API allows the user to exchange an organization scoped API-token for a user access token."
+					},
+					"response": []
+				},
+				{
+					"name": "Hydra_Local_login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"exec": [
+									"// Parse the response to extract the value of the hydra apiToken to a variable hydraApiToken.",
+									"var response = JSON.parse(responseBody);",
+									"pm.environment.set(\"hydrApiToken\", response.apiToken);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n      \"credentialRequested\": \"cspToken\",\n      \"credentialToken\": \"{{cspTokenId}}\"\n}"
+						},
+						"url": {
+							"raw": "https://{{hydraAddress}}/api/login/login",
+							"protocol": "https",
+							"host": [
+								"{{hydraAddress}}"
+							],
+							"path": [
+								"api",
+								"login",
+								"login"
+							]
+						},
+						"description": "Use the CSP User Access Token to fetch a Hydra API Token that will be used for subsequent HSAPI invocations."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pods",
+			"item": [
+				{
+					"name": "Get_Pods",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"exec": [
+									"//Initialize a local variable with the name of the Pod.",
+									"var pod = pm.variables.get(\"podName\");",
+									"",
+									"//Capture the response body in a variable for parsing later.",
+									"var response = JSON.parse(responseBody);",
+									"",
+									"//Traverse the response to fetch the id value for the pod specified in the environment variables.",
+									"for(var i=0; i < response.values.length; i++) {",
+									"    if(response.values[i].name==pod) {",
+									"        pm.environment.set(\"podId\", response.values[i].id);",
+									"    }",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{hydrApiToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/pods",
+							"protocol": "https",
+							"host": [
+								"{{hydraAddress}}"
+							],
+							"path": [
+								"hsapi",
+								"core",
+								"v1alpha",
+								"pods"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get_Pods_By_Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{hydrApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/pods/{{podId}}",
+							"protocol": "https",
+							"host": [
+								"{{hydraAddress}}"
+							],
+							"path": [
+								"hsapi",
+								"core",
+								"v1alpha",
+								"pods",
+								"{{podId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get_Pods_Unassigned_Pools",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{hydrApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/pods/{{podId}}/pools",
+							"protocol": "https",
+							"host": [
+								"{{hydraAddress}}"
+							],
+							"path": [
+								"hsapi",
+								"core",
+								"v1alpha",
+								"pods",
+								"{{podId}}",
+								"pools"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Assignments",
+			"item": [
+				{
+					"name": "Get_Assignments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"exec": [
+									"//Initialize a local variable with the name of the Pod.",
+									"var assignment = pm.variables.get(\"assignmentName\");",
+									"",
+									"//Capture the response body in a variable for parsing later.",
+									"var response = JSON.parse(responseBody);",
+									"",
+									"//Traverse the response to fetch the id value for the pod specified in the environment variables.",
+									"for(var i=0; i < response.values.length; i++) {",
+									"    if(response.values[i].name==assignment) {",
+									"        pm.environment.set(\"assignmentsId\", response.values[i].id);",
+									"    }",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{hydrApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments",
+							"protocol": "https",
+							"host": [
+								"{{hydraAddress}}"
+							],
+							"path": [
+								"hsapi",
+								"core",
+								"v1alpha",
+								"assignments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get_Assignments_By_Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{hydrApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}",
+							"protocol": "https",
+							"host": [
+								"{{hydraAddress}}"
+							],
+							"path": [
+								"hsapi",
+								"core",
+								"v1alpha",
+								"assignments",
+								"{{assignmentsId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get_Workspace_Assignment_Pods",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{hydrApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}/workspace/pods",
+							"protocol": "https",
+							"host": [
+								"{{hydraAddress}}"
+							],
+							"path": [
+								"hsapi",
+								"core",
+								"v1alpha",
+								"assignments",
+								"{{assignmentsId}}",
+								"workspace",
+								"pods"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get_Assignment_Capacity",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{hydrApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}/capacity",
+							"protocol": "https",
+							"host": [
+								"{{hydraAddress}}"
+							],
+							"path": [
+								"hsapi",
+								"core",
+								"v1alpha",
+								"assignments",
+								"{{assignmentsId}}",
+								"capacity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get_Assignment_User_Group_Identities",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{hydrApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}/user-group-identities",
+							"protocol": "https",
+							"host": [
+								"{{hydraAddress}}"
+							],
+							"path": [
+								"hsapi",
+								"core",
+								"v1alpha",
+								"assignments",
+								"{{assignmentsId}}",
+								"user-group-identities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get_Workspace_Assignment_Machine_Gps",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{hydrApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}/workspace/machine-groups",
+							"protocol": "https",
+							"host": [
+								"{{hydraAddress}}"
+							],
+							"path": [
+								"hsapi",
+								"core",
+								"v1alpha",
+								"assignments",
+								"{{assignmentsId}}",
+								"workspace",
+								"machine-groups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add_Workspace_Assignment_Machine_Gps",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{hydrApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n\t    {\n\t\t\t\"name\": \"st2-w10-float\",\n\t\t    \"op\": \"ATTACH\",\n\t\t    \"pod_id\": \"c41c2e6a-9310-4036-9bbe-7f96d5ed40fd\",\n\t\t    \"pool_or_farm_id\": \"Desktop/ODIxOGI0MTYtYmNjOS00YWJlLWIxNGItNWY3MmExYTE3NGI5/c3QyLXcxMC1mbG9hdA\",\n\t\t    \"platform_type\": \"AZURE\",\n\t\t    \"clone_type\": \"FULL_CLONE\"\n\t\t}\n]"
+						},
+						"url": {
+							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}/workspace/machine-groups",
+							"protocol": "https",
+							"host": [
+								"{{hydraAddress}}"
+							],
+							"path": [
+								"hsapi",
+								"core",
+								"v1alpha",
+								"assignments",
+								"{{assignmentsId}}",
+								"workspace",
+								"machine-groups"
+							]
+						},
+						"description": "This API allows associating unassigned pools to Assignments. Thus, values for attributes in the Request Body can be fetched using the Get_Pods_Unassigned_Pools API in the Pods folder.\n\nMandatory fields: `op`, `pod_id`, `pool_or_farm_id`, `platform_type` and `clone_type`.\nValid Values: \n* `op`: `ATTACH`, `DETACH`\n* `platform_type`: `HORIZON_ENTERPRISE`, `AZURE`\n* `clone_type`: `INSTANT_CLONE`, `LINKED_CLONE`, `FULL_CLONE`, `MANUAL`"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete_Workspace_Assignment_Machine_Gps",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{hydrApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n\t\t{\n            \"name\": \"st1-pool2\",\n            \"id\": \"08aa5396-a2fb-4ab1-bbae-d4646ca0ea59\",\n            \"op\": \"DETACH\",\n            \"pod_id\": \"f6e432a4-4553-4e59-ad2e-79819410b289\",\n            \"num_of_machines\": 1,\n            \"pool_or_farm_id\": \"Desktop/YTFjMGZmMDEtNTlhNi00ODU4LTk3NmEtMTM2ZGEzNGZjZWZm/c3QxLXBvb2wy\",\n            \"platform_type\": \"AZURE\",\n            \"clone_type\": \"INSTANT_CLONE\"\n        }\n]"
+						},
+						"url": {
+							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}/workspace/machine-groups",
+							"protocol": "https",
+							"host": [
+								"{{hydraAddress}}"
+							],
+							"path": [
+								"hsapi",
+								"core",
+								"v1alpha",
+								"assignments",
+								"{{assignmentsId}}",
+								"workspace",
+								"machine-groups"
+							]
+						},
+						"description": "This API allows dissociating workspaces from Assignments. Thus, values for attributes in the Request Body can be fetched using the Get_Pods_Unassigned_Pools API in the Pods folder. \n\nThe `id` field is the UUID for the Workspace in the Assignment. \n**Run Get_Workspace_Assignment_Machine_Gps before making this API call to get the value of the id field.**\n\nMandatory fields: `id`, `op`, `pod_id`, `pool_or_farm_id`, `platform_type` and `clone_type`.\nValid Values: \n* `op`: `ATTACH`, `DETACH`\n* `platform_type`: `HORIZON_ENTERPRISE`, `AZURE`\n* `clone_type`: `INSTANT_CLONE`, `LINKED_CLONE`, `FULL_CLONE`, `MANUAL`"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tenant",
+			"item": [
+				{
+					"name": "Get_Tenants",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"exec": [
+									"//Initialize a local variable with the name of the Pod.",
+									"var tenant = pm.variables.get(\"tenantName\");",
+									"",
+									"//Capture the response body in a variable for parsing later.",
+									"var response = JSON.parse(responseBody);",
+									"",
+									"//Traverse the response to fetch the id value for the pod specified in the environment variables.",
+									"for(var i=0; i < response.values.length; i++) {",
+									"    if(response.values[i].name==tenant) {",
+									"        pm.environment.set(\"tenantId\", response.values[i].id);",
+									"    }",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{hydrApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/tenants",
+							"protocol": "https",
+							"host": [
+								"{{hydraAddress}}"
+							],
+							"path": [
+								"hsapi",
+								"core",
+								"v1alpha",
+								"tenants"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get_Tenants_Sample_Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{hydrApiToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/tenants",
+									"protocol": "https",
+									"host": [
+										"{{hydraAddress}}"
+									],
+									"path": [
+										"hsapi",
+										"core",
+										"v1alpha",
+										"tenants"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.14.2"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 17 Sep 2019 18:03:19 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json;charset=UTF-8"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=7776000; includeSubDomains"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "https://hydra-local-81.eng.vmware.com"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Headers",
+									"value": "Authorization, Content-Type"
+								},
+								{
+									"key": "Access-Control-Allow-Methods",
+									"value": "GET, POST, OPTIONS, PUT, DELETE"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"totals\": {\n        \"num_pages\": 1,\n        \"total\": 1\n    },\n    \"paging\": {\n        \"limit\": 0,\n        \"page_size\": 1\n    },\n    \"values\": [\n        {\n            \"id\": \"e54b3cb2-6eec-4679-9698-68b4dd251f73\",\n            \"name\": \"Default Tenant\",\n            \"region\": \"USA\"\n        }\n    ],\n    \"page_size\": 1\n}"
+						}
+					]
+				},
+				{
+					"name": "Get_Tenants_By_Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{hydrApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/tenants/{{tenantId}}",
+							"protocol": "https",
+							"host": [
+								"{{hydraAddress}}"
+							],
+							"path": [
+								"hsapi",
+								"core",
+								"v1alpha",
+								"tenants",
+								"{{tenantId}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get_Tenants_By_Id_Sample_Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{hydrApiToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/tenants/{{tenantId}}",
+									"protocol": "https",
+									"host": [
+										"{{hydraAddress}}"
+									],
+									"path": [
+										"hsapi",
+										"core",
+										"v1alpha",
+										"tenants",
+										"{{tenantId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.14.2"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 17 Sep 2019 18:03:38 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json;charset=UTF-8"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=7776000; includeSubDomains"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "https://hydra-local-81.eng.vmware.com"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Headers",
+									"value": "Authorization, Content-Type"
+								},
+								{
+									"key": "Access-Control-Allow-Methods",
+									"value": "GET, POST, OPTIONS, PUT, DELETE"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": \"e54b3cb2-6eec-4679-9698-68b4dd251f73\",\n    \"name\": \"Default Tenant\",\n    \"region\": \"USA\"\n}"
+						}
+					]
+				}
+			]
+		}
+	]
+}
