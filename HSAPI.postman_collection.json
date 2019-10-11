@@ -75,11 +75,11 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"id": "45ff4343-567d-4188-bd05-7760b9c86ed8",
 								"exec": [
 									"// Parse the response to extract the value of the hydra apiToken to a variable hydraApiToken.",
 									"var response = JSON.parse(responseBody);",
-									"pm.environment.set(\"hydrApiToken\", response.apiToken);"
+									"pm.environment.set(\"hsApiToken\", response.apiToken);"
 								],
 								"type": "text/javascript"
 							}
@@ -163,7 +163,7 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{hydrApiToken}}",
+								"value": "Bearer {{hsApiToken}}",
 								"type": "text"
 							}
 						],
@@ -219,7 +219,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hydrApiToken}}"
+								"value": "Bearer {{hsApiToken}}"
 							}
 						],
 						"body": {
@@ -275,7 +275,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hydrApiToken}}"
+								"value": "Bearer {{hsApiToken}}"
 							}
 						],
 						"body": {
@@ -349,7 +349,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hydrApiToken}}"
+								"value": "Bearer {{hsApiToken}}"
 							}
 						],
 						"body": {
@@ -404,7 +404,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hydrApiToken}}"
+								"value": "Bearer {{hsApiToken}}"
 							}
 						],
 						"body": {
@@ -460,7 +460,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hydrApiToken}}"
+								"value": "Bearer {{hsApiToken}}"
 							}
 						],
 						"body": {
@@ -518,7 +518,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hydrApiToken}}"
+								"value": "Bearer {{hsApiToken}}"
 							}
 						],
 						"body": {
@@ -575,7 +575,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hydrApiToken}}"
+								"value": "Bearer {{hsApiToken}}"
 							}
 						],
 						"body": {
@@ -632,7 +632,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hydrApiToken}}"
+								"value": "Bearer {{hsApiToken}}"
 							}
 						],
 						"body": {
@@ -687,12 +687,12 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hydrApiToken}}"
+								"value": "Bearer {{hsApiToken}}"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n\t    {\n\t\t\t\"name\": \"st2-w10-float\",\n\t\t    \"op\": \"ATTACH\",\n\t\t    \"pod_id\": \"c41c2e6a-9310-4036-9bbe-7f96d5ed40fd\",\n\t\t    \"pool_or_farm_id\": \"Desktop/ODIxOGI0MTYtYmNjOS00YWJlLWIxNGItNWY3MmExYTE3NGI5/c3QyLXcxMC1mbG9hdA\",\n\t\t    \"platform_type\": \"AZURE\",\n\t\t    \"clone_type\": \"FULL_CLONE\"\n\t\t}\n]"
+							"raw": "[\n\t    {\n\t\t\t\"name\": \"st2-w10-float\",\n\t\t    \"op\": \"ATTACH\",\n\t\t    \"pod_id\": \"c41c2e6a-9310-4036-9bbe-7f96d5ed40fd\",\n\t\t    \"pool_or_farm_id\": \"Desktop/ODIxOGI0MTYtYmNjOS00YWJlLWIxNGItNWY3MmExYTE3NGI5/c3QyLXcxMC1mbG9hdA\",\n\t\t    \"platform_type\": \"HORIZON_ENTERPRISE\",\n\t\t    \"clone_type\": \"FULL_CLONE\"\n\t\t}\n]"
 						},
 						"url": {
 							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}/workspace/machine-groups",
@@ -710,7 +710,7 @@
 								"machine-groups"
 							]
 						},
-						"description": "This API allows associating unassigned pools to Assignments. Thus, values for attributes in the Request Body can be fetched using the Get_Pods_Unassigned_Pools API in the Pods folder.\n\nMandatory fields: `op`, `pod_id`, `pool_or_farm_id`, `platform_type` and `clone_type`.\nValid Values: \n* `op`: `ATTACH`, `DETACH`\n* `platform_type`: `HORIZON_ENTERPRISE`, `AZURE`\n* `clone_type`: `INSTANT_CLONE`, `LINKED_CLONE`, `FULL_CLONE`, `MANUAL`"
+						"description": "This API allows associating unassigned pools to Assignments. Thus, values for attributes in the Request Body can be fetched using the Get_Pods_Unassigned_Pools API in the Pods folder.\n\nMandatory fields: `op`, `pod_id`, `pool_or_farm_id`, `platform_type` and `clone_type`.\nValid Values: \n* `op`: `ATTACH`, `DETACH`\n* `platform_type`: `HORIZON_ENTERPRISE`\n* `clone_type`: `INSTANT_CLONE`, `LINKED_CLONE`, `FULL_CLONE`, `MANUAL`"
 					},
 					"response": []
 				},
@@ -743,12 +743,12 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hydrApiToken}}"
+								"value": "Bearer {{hsApiToken}}"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n\t\t{\n            \"name\": \"st1-pool2\",\n            \"id\": \"08aa5396-a2fb-4ab1-bbae-d4646ca0ea59\",\n            \"op\": \"DETACH\",\n            \"pod_id\": \"f6e432a4-4553-4e59-ad2e-79819410b289\",\n            \"num_of_machines\": 1,\n            \"pool_or_farm_id\": \"Desktop/YTFjMGZmMDEtNTlhNi00ODU4LTk3NmEtMTM2ZGEzNGZjZWZm/c3QxLXBvb2wy\",\n            \"platform_type\": \"AZURE\",\n            \"clone_type\": \"INSTANT_CLONE\"\n        }\n]"
+							"raw": "[\n\t\t{\n            \"name\": \"st1-pool2\",\n            \"id\": \"08aa5396-a2fb-4ab1-bbae-d4646ca0ea59\",\n            \"op\": \"DETACH\",\n            \"pod_id\": \"f6e432a4-4553-4e59-ad2e-79819410b289\",\n            \"num_of_machines\": 1,\n            \"pool_or_farm_id\": \"Desktop/YTFjMGZmMDEtNTlhNi00ODU4LTk3NmEtMTM2ZGEzNGZjZWZm/c3QxLXBvb2wy\",\n            \"platform_type\": \"HORIZON_ENTERPRISE\",\n            \"clone_type\": \"INSTANT_CLONE\"\n        }\n]"
 						},
 						"url": {
 							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}/workspace/machine-groups",
@@ -766,7 +766,7 @@
 								"machine-groups"
 							]
 						},
-						"description": "This API allows dissociating workspaces from Assignments. Thus, values for attributes in the Request Body can be fetched using the Get_Pods_Unassigned_Pools API in the Pods folder. \n\nThe `id` field is the UUID for the Workspace in the Assignment. \n**Run Get_Workspace_Assignment_Machine_Gps before making this API call to get the value of the id field.**\n\nMandatory fields: `id`, `op`, `pod_id`, `pool_or_farm_id`, `platform_type` and `clone_type`.\nValid Values: \n* `op`: `ATTACH`, `DETACH`\n* `platform_type`: `HORIZON_ENTERPRISE`, `AZURE`\n* `clone_type`: `INSTANT_CLONE`, `LINKED_CLONE`, `FULL_CLONE`, `MANUAL`"
+						"description": "This API allows dissociating workspaces from Assignments. Thus, values for attributes in the Request Body can be fetched using the Get_Pods_Unassigned_Pools API in the Pods folder. \n\nThe `id` field is the UUID for the Workspace in the Assignment. \n**Run Get_Workspace_Assignment_Machine_Gps before making this API call to get the value of the id field.**\n\nMandatory fields: `id`, `op`, `pod_id`, `pool_or_farm_id`, `platform_type` and `clone_type`.\nValid Values: \n* `op`: `ATTACH`, `DETACH`\n* `platform_type`: `HORIZON_ENTERPRISE`\n* `clone_type`: `INSTANT_CLONE`, `LINKED_CLONE`, `FULL_CLONE`, `MANUAL`"
 					},
 					"response": []
 				}
