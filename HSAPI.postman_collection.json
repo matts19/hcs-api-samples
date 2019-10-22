@@ -18,7 +18,7 @@
 								"exec": [
 									"// Parse the response to extract the value of the csp id_token to a variable cspTokenId.",
 									"var response = JSON.parse(responseBody);",
-									"pm.environment.set(\"cspTokenId\", response.id_token);"
+									"pm.environment.set(\"csp-access-token\", response.access_token);"
 								],
 								"type": "text/javascript"
 							}
@@ -44,16 +44,16 @@
 								},
 								{
 									"key": "refresh_token",
-									"value": "{{cspUserRefreshToken}}",
+									"value": "{{csp-user-refresh-token}}",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://{{cspAddress}}/csp/gateway/am/api/auth/api-tokens/authorize",
+							"raw": "https://{{csp-address}}/csp/gateway/am/api/auth/api-tokens/authorize",
 							"protocol": "https",
 							"host": [
-								"{{cspAddress}}"
+								"{{csp-address}}"
 							],
 							"path": [
 								"csp",
@@ -79,7 +79,7 @@
 								"exec": [
 									"// Parse the response to extract the value of the hydra apiToken to a variable hydraApiToken.",
 									"var response = JSON.parse(responseBody);",
-									"pm.environment.set(\"hsApiToken\", response.apiToken);"
+									"pm.environment.set(\"hs-api-token\", response.apiToken);"
 								],
 								"type": "text/javascript"
 							}
@@ -97,13 +97,13 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n      \"credentialRequested\": \"cspToken\",\n      \"credentialToken\": \"{{cspTokenId}}\"\n}"
+							"raw": "{\n      \"credentialRequested\": \"cspToken\",\n      \"credentialToken\": \"{{csp-access-token}}\"\n}"
 						},
 						"url": {
-							"raw": "https://{{hydraAddress}}/api/login/login",
+							"raw": "https://{{hydra-address}}/api/login/login",
 							"protocol": "https",
 							"host": [
-								"{{hydraAddress}}"
+								"{{hydra-address}}"
 							],
 							"path": [
 								"api",
@@ -129,7 +129,7 @@
 								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
 								"exec": [
 									"//Initialize a local variable with the name of the Pod.",
-									"var pod = pm.variables.get(\"podName\");",
+									"var pod = pm.variables.get(\"pod-name\");",
 									"",
 									"//Capture the response body in a variable for parsing later.",
 									"var response = JSON.parse(responseBody);",
@@ -137,7 +137,7 @@
 									"//Traverse the response to fetch the id value for the pod specified in the environment variables.",
 									"for(var i=0; i < response.values.length; i++) {",
 									"    if(response.values[i].name==pod) {",
-									"        pm.environment.set(\"podId\", response.values[i].id);",
+									"        pm.environment.set(\"pod-id\", response.values[i].id);",
 									"    }",
 									"}",
 									""
@@ -163,7 +163,7 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{hsApiToken}}",
+								"value": "Bearer {{hs-api-token}}",
 								"type": "text"
 							}
 						],
@@ -172,10 +172,10 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/pods",
+							"raw": "https://{{hydra-address}}/hsapi/core/v1alpha/pods",
 							"protocol": "https",
 							"host": [
-								"{{hydraAddress}}"
+								"{{hydra-address}}"
 							],
 							"path": [
 								"hsapi",
@@ -219,7 +219,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hsApiToken}}"
+								"value": "Bearer {{hs-api-token}}"
 							}
 						],
 						"body": {
@@ -227,17 +227,17 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/pods/{{podId}}",
+							"raw": "https://{{hydra-address}}/hsapi/core/v1alpha/pods/{{pod-id}}",
 							"protocol": "https",
 							"host": [
-								"{{hydraAddress}}"
+								"{{hydra-address}}"
 							],
 							"path": [
 								"hsapi",
 								"core",
 								"v1alpha",
 								"pods",
-								"{{podId}}"
+								"{{pod-id}}"
 							]
 						}
 					},
@@ -275,7 +275,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hsApiToken}}"
+								"value": "Bearer {{hs-api-token}}"
 							}
 						],
 						"body": {
@@ -283,17 +283,17 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/pods/{{podId}}/pools",
+							"raw": "https://{{hydra-address}}/hsapi/core/v1alpha/pods/{{pod-id}}/pools",
 							"protocol": "https",
 							"host": [
-								"{{hydraAddress}}"
+								"{{hydra-address}}"
 							],
 							"path": [
 								"hsapi",
 								"core",
 								"v1alpha",
 								"pods",
-								"{{podId}}",
+								"{{pod-id}}",
 								"pools"
 							]
 						}
@@ -314,7 +314,7 @@
 								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
 								"exec": [
 									"//Initialize a local variable with the name of the Pod.",
-									"var assignment = pm.variables.get(\"assignmentName\");",
+									"var assignment = pm.variables.get(\"assignment-name\");",
 									"",
 									"//Capture the response body in a variable for parsing later.",
 									"var response = JSON.parse(responseBody);",
@@ -322,7 +322,7 @@
 									"//Traverse the response to fetch the id value for the pod specified in the environment variables.",
 									"for(var i=0; i < response.values.length; i++) {",
 									"    if(response.values[i].name==assignment) {",
-									"        pm.environment.set(\"assignmentsId\", response.values[i].id);",
+									"        pm.environment.set(\"assignments-id\", response.values[i].id);",
 									"    }",
 									"}",
 									""
@@ -349,7 +349,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hsApiToken}}"
+								"value": "Bearer {{hs-api-token}}"
 							}
 						],
 						"body": {
@@ -357,10 +357,10 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments",
+							"raw": "https://{{hydra-address}}/hsapi/core/v1alpha/assignments",
 							"protocol": "https",
 							"host": [
-								"{{hydraAddress}}"
+								"{{hydra-address}}"
 							],
 							"path": [
 								"hsapi",
@@ -404,7 +404,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hsApiToken}}"
+								"value": "Bearer {{hs-api-token}}"
 							}
 						],
 						"body": {
@@ -412,17 +412,17 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}",
+							"raw": "https://{{hydra-address}}/hsapi/core/v1alpha/assignments/{{assignments-id}}",
 							"protocol": "https",
 							"host": [
-								"{{hydraAddress}}"
+								"{{hydra-address}}"
 							],
 							"path": [
 								"hsapi",
 								"core",
 								"v1alpha",
 								"assignments",
-								"{{assignmentsId}}"
+								"{{assignments-id}}"
 							]
 						}
 					},
@@ -460,7 +460,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hsApiToken}}"
+								"value": "Bearer {{hs-api-token}}"
 							}
 						],
 						"body": {
@@ -468,17 +468,17 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}/workspace/pods",
+							"raw": "https://{{hydra-address}}/hsapi/core/v1alpha/assignments/{{assignments-id}}/workspace/pods",
 							"protocol": "https",
 							"host": [
-								"{{hydraAddress}}"
+								"{{hydra-address}}"
 							],
 							"path": [
 								"hsapi",
 								"core",
 								"v1alpha",
 								"assignments",
-								"{{assignmentsId}}",
+								"{{assignments-id}}",
 								"workspace",
 								"pods"
 							]
@@ -518,7 +518,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hsApiToken}}"
+								"value": "Bearer {{hs-api-token}}"
 							}
 						],
 						"body": {
@@ -526,17 +526,17 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}/capacity",
+							"raw": "https://{{hydra-address}}/hsapi/core/v1alpha/assignments/{{assignments-id}}/capacity",
 							"protocol": "https",
 							"host": [
-								"{{hydraAddress}}"
+								"{{hydra-address}}"
 							],
 							"path": [
 								"hsapi",
 								"core",
 								"v1alpha",
 								"assignments",
-								"{{assignmentsId}}",
+								"{{assignments-id}}",
 								"capacity"
 							]
 						}
@@ -575,7 +575,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hsApiToken}}"
+								"value": "Bearer {{hs-api-token}}"
 							}
 						],
 						"body": {
@@ -583,17 +583,17 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}/user-group-identities",
+							"raw": "https://{{hydra-address}}/hsapi/core/v1alpha/assignments/{{assignments-id}}/user-group-identities",
 							"protocol": "https",
 							"host": [
-								"{{hydraAddress}}"
+								"{{hydra-address}}"
 							],
 							"path": [
 								"hsapi",
 								"core",
 								"v1alpha",
 								"assignments",
-								"{{assignmentsId}}",
+								"{{assignments-id}}",
 								"user-group-identities"
 							]
 						}
@@ -632,7 +632,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hsApiToken}}"
+								"value": "Bearer {{hs-api-token}}"
 							}
 						],
 						"body": {
@@ -640,17 +640,17 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}/workspace/machine-groups",
+							"raw": "https://{{hydra-address}}/hsapi/core/v1alpha/assignments/{{assignments-id}}/workspace/machine-groups",
 							"protocol": "https",
 							"host": [
-								"{{hydraAddress}}"
+								"{{hydra-address}}"
 							],
 							"path": [
 								"hsapi",
 								"core",
 								"v1alpha",
 								"assignments",
-								"{{assignmentsId}}",
+								"{{assignments-id}}",
 								"workspace",
 								"machine-groups"
 							]
@@ -687,7 +687,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hsApiToken}}"
+								"value": "Bearer {{hs-api-token}}"
 							}
 						],
 						"body": {
@@ -695,17 +695,17 @@
 							"raw": "[\n\t    {\n\t\t\t\"name\": \"st2-w10-float\",\n\t\t    \"op\": \"ATTACH\",\n\t\t    \"pod_id\": \"c41c2e6a-9310-4036-9bbe-7f96d5ed40fd\",\n\t\t    \"pool_or_farm_id\": \"Desktop/ODIxOGI0MTYtYmNjOS00YWJlLWIxNGItNWY3MmExYTE3NGI5/c3QyLXcxMC1mbG9hdA\",\n\t\t    \"platform_type\": \"HORIZON_ENTERPRISE\",\n\t\t    \"clone_type\": \"FULL_CLONE\"\n\t\t}\n]"
 						},
 						"url": {
-							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}/workspace/machine-groups",
+							"raw": "https://{{hydra-address}}/hsapi/core/v1alpha/assignments/{{assignments-id}}/workspace/machine-groups",
 							"protocol": "https",
 							"host": [
-								"{{hydraAddress}}"
+								"{{hydra-address}}"
 							],
 							"path": [
 								"hsapi",
 								"core",
 								"v1alpha",
 								"assignments",
-								"{{assignmentsId}}",
+								"{{assignments-id}}",
 								"workspace",
 								"machine-groups"
 							]
@@ -743,7 +743,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hsApiToken}}"
+								"value": "Bearer {{hs-api-token}}"
 							}
 						],
 						"body": {
@@ -751,17 +751,17 @@
 							"raw": "[\n\t\t{\n            \"name\": \"st1-pool2\",\n            \"id\": \"08aa5396-a2fb-4ab1-bbae-d4646ca0ea59\",\n            \"op\": \"DETACH\",\n            \"pod_id\": \"f6e432a4-4553-4e59-ad2e-79819410b289\",\n            \"num_of_machines\": 1,\n            \"pool_or_farm_id\": \"Desktop/YTFjMGZmMDEtNTlhNi00ODU4LTk3NmEtMTM2ZGEzNGZjZWZm/c3QxLXBvb2wy\",\n            \"platform_type\": \"HORIZON_ENTERPRISE\",\n            \"clone_type\": \"INSTANT_CLONE\"\n        }\n]"
 						},
 						"url": {
-							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/assignments/{{assignmentsId}}/workspace/machine-groups",
+							"raw": "https://{{hydra-address}}/hsapi/core/v1alpha/assignments/{{assignments-id}}/workspace/machine-groups",
 							"protocol": "https",
 							"host": [
-								"{{hydraAddress}}"
+								"{{hydra-address}}"
 							],
 							"path": [
 								"hsapi",
 								"core",
 								"v1alpha",
 								"assignments",
-								"{{assignmentsId}}",
+								"{{assignments-id}}",
 								"workspace",
 								"machine-groups"
 							]
@@ -784,7 +784,7 @@
 								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
 								"exec": [
 									"//Initialize a local variable with the name of the Pod.",
-									"var tenant = pm.variables.get(\"tenantName\");",
+									"var tenant = pm.variables.get(\"tenant-name\");",
 									"",
 									"//Capture the response body in a variable for parsing later.",
 									"var response = JSON.parse(responseBody);",
@@ -792,7 +792,7 @@
 									"//Traverse the response to fetch the id value for the pod specified in the environment variables.",
 									"for(var i=0; i < response.values.length; i++) {",
 									"    if(response.values[i].name==tenant) {",
-									"        pm.environment.set(\"tenantId\", response.values[i].id);",
+									"        pm.environment.set(\"tenant-id\", response.values[i].id);",
 									"    }",
 									"}",
 									""
@@ -819,7 +819,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hydrApiToken}}"
+								"value": "Bearer {{hs-api-token}}"
 							}
 						],
 						"body": {
@@ -827,10 +827,10 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/tenants",
+							"raw": "https://{{hydra-address}}/hsapi/core/v1alpha/tenants",
 							"protocol": "https",
 							"host": [
-								"{{hydraAddress}}"
+								"{{hydra-address}}"
 							],
 							"path": [
 								"hsapi",
@@ -973,7 +973,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Bearer {{hydrApiToken}}"
+								"value": "Bearer {{hs-api-token}}"
 							}
 						],
 						"body": {
@@ -981,17 +981,17 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "https://{{hydraAddress}}/hsapi/core/v1alpha/tenants/{{tenantId}}",
+							"raw": "https://{{hydra-address}}/hsapi/core/v1alpha/tenants/{{tenant-id}}",
 							"protocol": "https",
 							"host": [
-								"{{hydraAddress}}"
+								"{{hydra-address}}"
 							],
 							"path": [
 								"hsapi",
 								"core",
 								"v1alpha",
 								"tenants",
-								"{{tenantId}}"
+								"{{tenant-id}}"
 							]
 						}
 					},
@@ -1096,6 +1096,66 @@
 							"body": "{\n    \"id\": \"e54b3cb2-6eec-4679-9698-68b4dd251f73\",\n    \"name\": \"Default Tenant\",\n    \"region\": \"USA\"\n}"
 						}
 					]
+				}
+			]
+		},
+		{
+			"name": "Audit",
+			"item": [
+				{
+					"name": "Retrieve_All_Audit_Events",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02e8cecb-4413-474c-8bdd-60d05565c9cd",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{hs-api-token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{hydra-address}}/hsapi/audit/v1alpha/events",
+							"protocol": "https",
+							"host": [
+								"{{hydra-address}}"
+							],
+							"path": [
+								"hsapi",
+								"audit",
+								"v1alpha",
+								"events"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
